@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Results</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+  <style>
+    /* Add CSS styles for the map container */
+    .map-container {
+      height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <form method="POST" action="/search" class="search-container">
+      <div class="search-input-container">
+        <input type="text" name="search" id="search-input" placeholder="agency name, city..." class="search-input">
+        <div id="search-suggestions"></div> <!-- Display search suggestions here -->
+      </div>
+      <button type="submit" class="search-button">Search</button>
+    </form>
+  </div>
+
+  <h1>Search Results</h1>
+
+  {% if search_results %}
+    {% for result in search_results %}
+      <div class="search-result">
+        <p><strong>Agency name:</strong> {{ result[0] }}</p>
+        <hr>
+        <!-- Add a container for the map with a unique ID -->
+       <!-- <div id="map_{{ result[0][0] }}" class="map-container"></div>-->
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No results found.</p>
+  {% endif %}
+
+  {% if total_pages > 1 %}
+    <div class="pagination">
+      {% if current_page > 1 %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ current_page - 1 }}">Previous</a>
+      {% endif %}
+
+      {% if current_page < total_pages %}
+        <a href="?page={{ current_page + 1 }}">Next</a>
+        <a href="?page={{ total_pages }}">Last</a>
+      {% endif %}
+    </div>
+  {% endif %}
+  <!-- Load the Google Maps API with your API key -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYSjK-Q9R6UMbbh-wGa7YD-zLILcvjbvI&callback=initMaps" async defer></script>
+  <script>
+    // Initialize the maps
+    function initMaps() {
+      {% for result in search_results %}
+        // Get the latitude and longitude values from the result
+        var latitude = {{ result[0][8] }};
+        var longitude = {{ result[0][9] }};
+
+        // Create a new map instance
+        var map = new google.maps.Map(document.getElementById('map_{{ result[0][0] }}'), {
+          center: {lat: latitude, lng: longitude},
+          zoom: 15
+        });
+
+        // Add a marker to the map
+        var marker = new google.maps.Marker({
+          position: {lat: latitude, lng: longitude},
+          map: map,
+          title: '{{ result[0][0] }}'
+        });
+      {% endfor %}
+    }
+  </script>
+</body>
+</html>

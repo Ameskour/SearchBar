@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>	
+    <title>Search Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/stylesss.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <form method="POST" action="/search" class="search-container">
+            <div class="search-input-container">
+                <input type="text" name="search" id="search-input" placeholder="agency name" class="search-input">
+                <div id="search-suggestions"></div> <!-- Display search suggestions here -->
+            </div>
+            <button type="submit" class="search-button">Search</button>
+        </form>
+    </div>
+</body>
+</html>
